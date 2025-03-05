@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter } from 'lucide-react';
-import { sampleFormulas } from '../data/sampleData';
+import { useFormulaStore } from '../stores/formulaStore';
 import FormulaCard from '../components/FormulaCard';
 
 interface SearchPageProps {
@@ -11,6 +11,11 @@ interface SearchPageProps {
 const SearchPage: React.FC<SearchPageProps> = ({ onSelectFormula }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const { formulas, getFormulas } = useFormulaStore();
+
+  useEffect(() => {
+    getFormulas();
+  }, []);
   
   const categories = [
     { id: 'all', name: 'All Categories' },
@@ -22,9 +27,9 @@ const SearchPage: React.FC<SearchPageProps> = ({ onSelectFormula }) => {
     { id: 'other', name: 'Other' },
   ];
 
-  const filteredFormulas = sampleFormulas.filter(formula => {
+  const filteredFormulas = formulas.filter(formula => {
     const matchesSearch = formula.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          formula.description.toLowerCase().includes(searchTerm.toLowerCase());
+                         formula.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || formula.category === selectedCategory;
     
     return matchesSearch && matchesCategory;

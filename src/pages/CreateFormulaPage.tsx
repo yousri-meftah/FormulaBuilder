@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, Info, Calculator } from 'lucide-react';
+import { useFormulaStore } from '../stores/formulaStore';
+import { useAuthStore } from '../stores/authStore';
+import { CreateFormulaData } from '../types/formula';
 
 interface CreateFormulaPageProps {
   onFormulaCreated: () => void;
@@ -13,14 +16,13 @@ const CreateFormulaPage: React.FC<CreateFormulaPageProps> = ({ onFormulaCreated 
   const [variables, setVariables] = useState([{ name: '', symbol: '', coefficient: '1', description: '' }]);
   const [previewResult, setPreviewResult] = useState<string | null>(null);
   const [previewValues, setPreviewValues] = useState<Record<string, string>>({});
+  const { createFormula } = useFormulaStore();
+  const { isAuthenticated } = useAuthStore();
   
   const categories = [
-    { id: 'education', name: 'Education' },
-    { id: 'finance', name: 'Finance' },
-    { id: 'business', name: 'Business' },
-    { id: 'health', name: 'Health & Fitness' },
-    { id: 'science', name: 'Science' },
-    { id: 'other', name: 'Other' },
+    { id: 1, name: 'Education' },
+    { id: 2, name: 'Finance' },
+    { id: 3, name: 'Business' },
   ];
 
   const handleAddVariable = () => {
@@ -91,26 +93,40 @@ const CreateFormulaPage: React.FC<CreateFormulaPageProps> = ({ onFormulaCreated 
       
       const result = evalExpression(expression, previewValues);
       setPreviewResult(Number.isFinite(result) ? result.toFixed(2) : 'Error');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setPreviewResult('Error');
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Here you would typically send the data to your backend
-    console.log({
-      name: formulaName,
-      description,
-      category,
-      expression,
-      variables
-    });
-    
-    // For now, we'll just simulate a successful creation
-    alert('Formula created successfully!');
-    onFormulaCreated();
+    if (!isAuthenticated) {
+      alert('Please sign in to create a formula');
+      return;
+    }
+
+    try {
+      const formulaData: CreateFormulaData = {
+        name: formulaName,
+        description,
+        category_id: parseInt(category),
+        inputs: variables.map(v => ({
+          name: v.name,
+          symbol: v.symbol,
+          coefficient: parseFloat(v.coefficient),
+          description: v.description
+        }))
+      };
+
+      await createFormula(formulaData);
+      alert('Formula created successfully!');
+      onFormulaCreated();
+    } catch (error) {
+      console.error('Error creating formula:', error);
+      alert('Error creating formula. Please try again.');
+    }
   };
 
   return (

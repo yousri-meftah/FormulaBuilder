@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Search, Plus, TrendingUp, Star, BookOpen, Calculator } from 'lucide-react';
-import { sampleFormulas } from '../data/sampleData';
+//import { sampleFormulas } from '../data/sampleData';
 import FormulaCard from '../components/FormulaCard';
+import { useFormulaStore } from '../stores/formulaStore';
+import { Formula } from '../types/formula';
 
 interface HomePageProps {
   onNavigate: (page: string) => void;
 }
 
 const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
-  // Get trending and top-rated formulas
-  const trendingFormulas = sampleFormulas.slice(0, 3);
-  const topRatedFormulas = [...sampleFormulas]
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 3);
+  const { top_formulas,popular_formula, getTopRatedFormulas, getPopularFormulas } = useFormulaStore();  
+  useEffect(() => {
+    getTopRatedFormulas();
+    getPopularFormulas();
+  }, [getTopRatedFormulas, getPopularFormulas]);
 
   return (
     <div className="space-y-10">
@@ -128,7 +130,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <TrendingUp className="h-5 w-5 text-indigo-600" />
         </div>
         <div className="grid md:grid-cols-3 gap-6">
-          {trendingFormulas.map((formula) => (
+          {popular_formula.map((formula:Formula) => (
             <FormulaCard key={formula.id} formula={formula} />
           ))}
         </div>
@@ -141,7 +143,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
           <Star className="h-5 w-5 text-indigo-600" />
         </div>
         <div className="grid md:grid-cols-3 gap-6">
-          {topRatedFormulas.map((formula) => (
+          {top_formulas.map((formula: Formula) => (
             <FormulaCard key={formula.id} formula={formula} />
           ))}
         </div>

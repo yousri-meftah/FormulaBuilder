@@ -1,5 +1,7 @@
-import React from 'react';
-import { Search, Plus, Calculator, Home } from 'lucide-react';
+import React, { useState } from 'react';
+import { Search, Plus, Calculator, Home, LogOut, User } from 'lucide-react';
+import { useAuthStore } from '../stores/authStore';
+import AuthModal from './AuthModal';
 
 interface NavbarProps {
   currentPage: string;
@@ -7,8 +9,13 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { user, isAuthenticated, logout } = useAuthStore();
+
   return (
     <header className="bg-white shadow-sm">
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+      
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -51,6 +58,33 @@ const Navbar: React.FC<NavbarProps> = ({ currentPage, onNavigate }) => {
               Create
             </button>
           </nav>
+
+          <div className="flex items-center space-x-4">
+            {isAuthenticated ? (
+              <>
+              <button onClick={() => onNavigate('profile')}>
+                <div className="flex items-center text-gray-700">
+                    <User className="h-5 w-5 mr-2" />
+                    <span>{user?.username}</span>
+                  </div>
+              </button>
+                
+                <button
+                  onClick={logout}
+                  className="flex items-center text-gray-600 hover:text-indigo-600"
+                >
+                  <LogOut className="h-5 w-5" />
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+              >
+                Sign In
+              </button>
+            )}
+          </div>
           
           <div className="md:hidden">
             <button className="text-gray-500 hover:text-indigo-600 focus:outline-none">
