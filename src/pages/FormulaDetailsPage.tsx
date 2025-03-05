@@ -122,7 +122,7 @@ const FormulaDetailsPage: React.FC<FormulaDetailsPageProps> = ({ formula: initia
 
         <div className="bg-gray-50 p-4 rounded-md mb-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Formula</h2>
-          <div className="text-center p-4 text-xl font-medium text-gray-900">{formula.description}</div>
+          <div className="text-center p-4 text-xl font-medium text-gray-900">{formula.expression}</div>
         </div>
       </div>
 

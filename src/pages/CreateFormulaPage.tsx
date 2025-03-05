@@ -112,6 +112,7 @@ const CreateFormulaPage: React.FC<CreateFormulaPageProps> = ({ onFormulaCreated 
         name: formulaName,
         description,
         category_id: parseInt(category),
+        expression,
         inputs: variables.map(v => ({
           name: v.name,
           symbol: v.symbol,

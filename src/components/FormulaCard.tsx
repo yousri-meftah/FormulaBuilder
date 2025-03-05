@@ -29,7 +29,7 @@ const FormulaCard: React.FC<FormulaCardProps> = ({ formula }) => {
         <p className="text-gray-600 text-sm mb-3 line-clamp-2"></p>
         
         <div className="bg-gray-50 p-3 rounded-md mb-3">
-          <p className="text-center font-medium text-gray-800">{formula.description}</p>
+          <p className="text-center font-medium text-gray-800">{formula.expression}</p>
         </div>
         
         <div className="flex justify-between items-center">
