@@ -11,6 +11,7 @@ export interface Formula {
   name: string;
   description: string;
   category_id: number;
+  expression:string;
   usage_count: number;
   inputs: FormulaInput[];
   created_at?: string;
@@ -20,6 +21,7 @@ export interface Formula {
 export interface CreateFormulaData {
   name: string;
   description: string;
+  expression:string;
   category_id: number;
   inputs: FormulaInput[];
 }
